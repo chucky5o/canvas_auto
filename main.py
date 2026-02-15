@@ -290,12 +290,13 @@ class CanvasClient:
     # --- Grading Helper ---
     def analyze_submission(self, submission, assignment):
         """
-        Analyzes a submission for late penalty and extracts content.
+        Analyzes a submission for late penalty, format issues (screenshots), and extracts content.
         """
         result = {
             "user_id": submission.get('user_id'),
             "late": False,
             "late_penalty": 0,
+            "format_warning": None,
             "content": "",
             "files": []
         }
@@ -313,18 +314,28 @@ class CanvasClient:
                 result["late_penalty"] = 0.10 # 10%
                 print(f"  [!] LATE SUBMISSION: {s_dt} > {d_dt}")
 
-        # Extract Content
+        # Extract Content & Check Format
         if submission.get('body'):
             result["content"] += f"\n[Text Body]:\n{submission['body']}\n"
         
         if submission.get('attachments'):
+            image_exts = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.heic']
+            has_images = False
+            
             for att in submission['attachments']:
                 fname = att['display_name']
                 furl = att['url']
+                ext = os.path.splitext(fname)[1].lower()
+                
                 result["files"].append({"name": fname, "url": furl})
                 
+                # Check for images
+                if ext in image_exts:
+                    has_images = True
+                    result["content"] += f"\n[IMAGE FILE DETECTED]: {fname} (Visual Check Required)\n"
+
                 # If PDF and pypdf available, extract text
-                if fname.lower().endswith('.pdf') and PYPDF_AVAILABLE:
+                elif fname.lower().endswith('.pdf') and PYPDF_AVAILABLE:
                     try:
                         print(f"  Downloading {fname} for analysis...")
                         local_path = f"temp_{fname}"
@@ -339,6 +350,9 @@ class CanvasClient:
                         os.remove(local_path)
                     except Exception as e:
                         print(f"  [!] Failed to read PDF {fname}: {e}")
+            
+            if has_images:
+                result["format_warning"] = "⚠️ SCREENSHOTS DETECTED: Student submitted images instead of a document."
 
         return result
 

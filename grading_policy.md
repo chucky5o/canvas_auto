@@ -14,4 +14,10 @@
 ## Instructions for AI Grader
 -   Check the `submitted_at` timestamp against `due_at`.
 -   If `submitted_at` > `due_at`, explicitly mention "Late Penalty Applied (-10%)".
--   Evaluate content based on the specific assignment instructions (Learning Objectives).
+    -   Evaluate content based on the specific assignment instructions (Learning Objectives).
+
+3.  **Submission Format:**
+    -   **Screenshots:** If a student submits screenshots (images) instead of a document:
+        -   **Flag it:** The content might be correct, but the format is incorrect.
+        -   **Action:** Review visually. If content is good, grade leniently but add a comment: *"Please submit as a PDF or Word doc in the future."*
+        -   If illegible or incomplete, request resubmission.
