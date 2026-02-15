@@ -1,0 +1,7 @@
+venv/
+.canvas_tool/
+__pycache__/
+*.pyc
+*.log
+*.sqlite3
+temp_*.pdf
