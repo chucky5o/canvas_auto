@@ -5,3 +5,4 @@ __pycache__/
 *.log
 *.sqlite3
 temp_*.pdf
+*.pdf
